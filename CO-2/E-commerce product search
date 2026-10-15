@@ -1,0 +1,74 @@
+# Q1. E-Commerce Product Search
+
+## (a) Suitable Data Structures 
+
+1. Sequence (List): A list is used to store all product records. It maintains the insertion order and allows easy iteration through the products.
+
+2. Mapping (Dictionary): A dictionary is used to store product details such as product ID, category, price, and tags. It allows values to be accessed using keys.
+
+3. Set: A set is used to store product tags and search tags. It removes duplicate tags and supports efficient membership testing and set intersection.
+
+## (b) Pythonic Filtering Using Comprehensions and Set Operations
+
+def find_products(products, target_category, search_tags):
+    search_tags = set(search_tags)
+
+    return [
+        product for product in products
+        if product['category'] == target_category
+        and product['tags'] & search_tags
+    ]
+
+products = [
+    {'id': 1, 'category': 'electronics', 'price': 299,
+     'tags': {'wireless', 'audio'}},
+    {'id': 2, 'category': 'electronics', 'price': 899,
+     'tags': {'gaming', 'laptop'}},
+    {'id': 3, 'category': 'furniture', 'price': 150,
+     'tags': {'wooden', 'chair'}},
+    {'id': 4, 'category': 'electronics', 'price': 59,
+     'tags': {'bluetooth', 'audio'}},
+    {'id': 5, 'category': 'furniture', 'price': 220,
+     'tags': {'wooden', 'table'}}
+]
+
+target_category = 'electronics'
+search_tags = ['audio', 'bluetooth']
+
+result = find_products(products, target_category, search_tags)
+
+for product in result:
+    print(product)
+```
+
+Output:
+
+text
+```
+{'id': 1, 'category': 'electronics', 'price': 299,
+ 'tags': {'wireless', 'audio'}}
+
+{'id': 4, 'category': 'electronics', 'price': 59,
+ 'tags': {'bluetooth', 'audio'}}
+```
+
+Explanation:
+
+- The list comprehension filters products by category.
+- Set intersection (`&`) checks whether a product has at least one matching search tag.
+- Only products satisfying both conditions are returned.
+
+## (c) Advantages of the Selected Data Structures
+
+- Lists: Store multiple products in order and allow easy iteration.
+- Dictionaries: Provide direct access to product details using keys, with average $O(1)$ lookup when searching by a known key.
+- Sets: Remove duplicate tags and provide average $O(1)$ membership testing. Set intersection avoids the need for nested loops to compare every tag.
+
+## Time Complexity
+
+Let $N$ be the number of products, $n$ the number of tags per product, and $m$ the number of search tags.
+
+- Nested loops: $O(Nnm)$
+- List comprehension with set intersection: approximately $O(N\min(n,m))$ for tag matching, plus the category scan, assuming average-case set operations.
+
+Conclusion: Dynamic filtering using lists, dictionaries, sets, comprehensions, and set operations makes the code more readable and can improve efficiency compared with repeatedly searching through lists.
