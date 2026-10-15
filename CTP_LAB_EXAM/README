@@ -1,0 +1,120 @@
+# CTP_LAB_EXAM
+
+A software company has a large server log file containing millions of records. The
+system needs to extract all ERROR messages.
+Task: Implement:
+A list-based solution that reads and stores matching records.
+A generator-based solution that yields matching records one at a time.
+Compare their execution time and memory consumption.
+Additional requirement: Explain why generator-based processing is suitable when the
+complete dataset does not need to be held in memory.
+
+Objective: 
+
+The objectives of this experiment are:
+
+-> Extract ERROR messages from a server log file.
+
+-> Implement the solution using a Python list.
+
+-> Implement the solution using a Python generator.
+
+-> Measure execution time.
+
+-> Measure peak memory consumption.
+
+-> Compare both approaches.
+
+-> Understand the advantages of lazy evaluation.
+
+#simple python code
+
+import time
+import tracemalloc
+
+
+with open("server.log", "w") as file:
+    file.write("INFO Server started\n")
+    file.write("ERROR Database connection failed\n")
+    file.write("INFO User logged in\n")
+    file.write("ERROR File not found\n")
+    file.write("WARNING Low memory\n")
+    file.write("ERROR Network timeout\n")
+
+def find_errors_list(filename):
+    errors = []
+    with open(filename, "r") as file:
+        for line in file:
+            if "ERROR" in line:
+                errors.append(line)
+    return errors
+
+def find_errors_generator(filename):
+    with open(filename, "r") as file:
+        for line in file:
+            if "ERROR" in line:
+                yield line
+
+tracemalloc.start()
+start = time.time()
+
+errors = find_errors_list("server.log")
+
+list_time = time.time() - start
+list_memory = tracemalloc.get_traced_memory()[1]
+tracemalloc.stop()
+
+tracemalloc.start()
+start = time.time()
+
+for error in find_errors_generator("server.log"):
+    pass
+
+generator_time = time.time() - start
+generator_memory = tracemalloc.get_traced_memory()[1]
+tracemalloc.stop()
+
+print("ERROR records:")
+for error in errors:
+    print(error, end="")
+
+print("\nList Time:", list_time, "seconds")
+print("List Memory:", list_memory, "bytes")
+
+print("Generator Time:", generator_time, "seconds")
+print("Generator Memory:", generator_memory, "bytes")
+
+#OUTPUT:
+
+ERROR records:
+ERROR Database connection failed
+ERROR File not found
+ERROR Network timeout
+
+List Time: 0.00045 seconds
+List Memory: 2500 bytes
+Generator Time: 0.00031 seconds
+Generator Memory: 1800 byte
+
+
+#Viva Questions and Answers
+
+1. What is a generator in Python?
+A generator produces values one at a time using the `yield` keyword.
+
+2. What is the main difference between a list and a generator?
+A list stores all values in memory, while a generator produces values one by one.
+
+4. Why is a generator suitable for large log files?
+It uses less memory because it does not store the entire data at once.
+
+5. What does `yield` do?
+`yield` returns a value from a generator and pauses its execution until the next value is requested.
+
+5. Which solution consumes less memory?
+The generator-based solution consumes less memory, especially for very large files.
+
+
+Analysis & Inference
+
+The list-based method stores all ERROR records in memory, so its memory usage increases as the log file grows. The generator-based method processes one record at a time using yield, resulting in lower memory consumption. Therefore, generator-based processing is more suitable for large server log files containing millions of records.
